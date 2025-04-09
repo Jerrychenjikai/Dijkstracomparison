@@ -4,8 +4,6 @@
 #define maxn 200005
 using namespace std;
 
-struct rootnode;
-
 struct heapnode{
 	node* value;
 	bool mark=0;
@@ -17,36 +15,29 @@ struct heapnode{
 	heapnode* fa=nullptr;
 	heapnode* firstchild=nullptr;
 	
-	rootnode* root=nullptr;
-};
-
-struct rootnode{
-	heapnode* value;
-	rootnode* prev=nullptr;
-	rootnode* nxt=nullptr;
+	heapnode* nxt=nullptr;
+	heapnode* prev=nullptr;
 };
 
 class priorityq{
 private:
 	heapnode* id_to_root[maxn];
 	
-	rootnode* rootroot=nullptr; //root of root list
+	heapnode* rootroot=nullptr; //root of root list
 	heapnode* minn=nullptr;
 	
 	heapnode nodes[maxn];
 	int top=0;
 	
 	void insert_into_rootlist(heapnode* a){
-		rootnode* cacheroot = new rootnode();
-		cacheroot->value = a;
-		a->root = cacheroot;
+		heapnode* cacheroot = a;
 		
 		cacheroot->nxt=rootroot;
 		if(rootroot!=nullptr) cacheroot->nxt->prev=cacheroot;
 		rootroot=cacheroot;
 	}
 	
-	void remove_from_rootlist(rootnode* a){
+	void remove_from_rootlist(heapnode* a){
 		if(a->nxt!=nullptr)
 			a->nxt->prev=a->prev;
 		if(a->prev!=nullptr)
@@ -112,7 +103,7 @@ public:
 	}
 	
 	void del(){
-		remove_from_rootlist(minn->root);
+		remove_from_rootlist(minn);
 		
 		heapnode* cache=minn->firstchild;
 		while(cache!=nullptr){
@@ -122,45 +113,42 @@ public:
 		}
 		
 		
-		rootnode* unique_degree[maxn];
+		heapnode* unique_degree[maxn];
 		for(int i=0;i<maxn;i++) unique_degree[i]=nullptr;
-		rootnode* rootcache=rootroot;
-		rootnode* current;
+		heapnode* rootcache=rootroot;
+		heapnode* current;
 		
 		while(rootcache!=nullptr){
 			current=rootcache;
 			
-			while(unique_degree[current->value->degree]!=nullptr){
-				if(*(current->value->value) < *(unique_degree[current->value->degree]->value->value)){
+			while(unique_degree[current->degree]!=nullptr){
+				if(*(current->value) < *(unique_degree[current->degree]->value)){
 					//remove larger from rootlist
-					remove_from_rootlist(unique_degree[current->value->degree]);
-					cache=unique_degree[current->value->degree]->value;
-					unique_degree[current->value->degree]=nullptr;
+					remove_from_rootlist(unique_degree[current->degree]);
+					cache=unique_degree[current->degree];
+					unique_degree[current->degree]=nullptr;
 					
 					//merge larger under smaller
-					cache->fa=current->value;
-					if(current->value->firstchild!=nullptr) current->value->firstchild->prevbro=cache;
+					if(current->firstchild!=nullptr) current->firstchild->prevbro=cache;
 					cache->prevbro=nullptr;
-					cache->nxtbro=current->value->firstchild;
-					current->value->firstchild=cache;
-					current->value->degree++;
+					cache->nxtbro=current->firstchild;
+					current->firstchild=cache;
+					current->degree++;
 				}
 				
 				else{
 					//remove larger from rootlist
 					remove_from_rootlist(current);
-					cache=unique_degree[current->value->degree]->value;
-					unique_degree[current->value->degree]=nullptr;
+					cache=unique_degree[current->degree];
+					unique_degree[current->degree]=nullptr;
 					
 					//merge larger under smaller
-					swap(current->value,cache);
-					current->value->root=current;
-					cache->fa=current->value;
-					if(current->value->firstchild!=nullptr) current->value->firstchild->prevbro=cache;
+					swap(current,cache);
+					if(current->firstchild!=nullptr) current->firstchild->prevbro=cache;
 					cache->prevbro=nullptr;
-					cache->nxtbro=current->value->firstchild;
-					current->value->firstchild=cache;
-					current->value->degree++;
+					cache->nxtbro=current->firstchild;
+					current->firstchild=cache;
+					current->degree++;
 				}
 			}
 			rootcache=rootcache->nxt;
@@ -170,8 +158,8 @@ public:
 		minn=nullptr;
 		
 		while(rootcache!=nullptr){
-			if(minn==nullptr or *(minn->value)>*(rootcache->value->value)){
-				minn=rootcache->value;
+			if(minn==nullptr or *(minn->value)>*(rootcache->value)){
+				minn=rootcache;
 			}
 			rootcache=rootcache->nxt;
 		}
