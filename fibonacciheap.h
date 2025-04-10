@@ -114,7 +114,7 @@ public:
 		
 		
 		heapnode* unique_degree[maxn];
-		for(int i=0;i<maxn;i++) unique_degree[i]=nullptr;
+		for(int i=0;i<10005;i++) unique_degree[i]=nullptr;
 		heapnode* rootcache=rootroot;
 		heapnode* current;
 		
