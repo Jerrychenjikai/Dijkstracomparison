@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "node.h"
 #define maxn 200005
 using namespace std;
@@ -114,7 +115,11 @@ public:
 		
 		
 		heapnode* unique_degree[maxn];
-		for(int i=0;i<10005;i++) unique_degree[i]=nullptr;
+		
+		const double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+		double maxDegree = log(top) / log(phi);
+		
+		for(int i=0;i<maxDegree+5;i++) unique_degree[i]=nullptr;
 		heapnode* rootcache=rootroot;
 		heapnode* current;
 		
