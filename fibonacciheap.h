@@ -119,7 +119,8 @@ public:
 		const double phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		double maxDegree = log(top) / log(phi);
 		
-		for(int i=0;i<maxDegree+5;i++) unique_degree[i]=nullptr;
+		memset(unique_degree, 0, (int(maxDegree)+5) * sizeof(int*));
+		
 		heapnode* rootcache=rootroot;
 		heapnode* current;
 		
