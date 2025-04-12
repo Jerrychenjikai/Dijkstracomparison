@@ -1,13 +1,13 @@
 #include <iostream>
 #include "node.h"
-#include "fibonacciheap.h"
+#include "binaryheap.h"
 #include <vector>
 #include <cstdio>
 #include <chrono>
 #define maxn 200005
 using namespace std;
 
-/*
+/*	
 Functions required for the priority queue:
 1. void push(node& a)
 2. void change(node& a, int value) (change the value of a node)
@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("b.in","r",stdin);
+	freopen("super.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;

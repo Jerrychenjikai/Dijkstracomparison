@@ -54,6 +54,7 @@ public:
 	}
 	
 	void del(){
+		//cout<<"id: "<<nodes[1]->id<<endl;
 		nodes[1]=nodes[top-1];
 		id_to_pos[nodes[1]->id]=1;
 		top--;

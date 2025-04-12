@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <chrono>
+#include <thread>
 #include "node.h"
 #define maxn 200005
 using namespace std;
@@ -32,9 +34,12 @@ private:
 	
 	void insert_into_rootlist(heapnode* a){
 		heapnode* cacheroot = a;
+		cacheroot->prevbro=nullptr;
+		cacheroot->nxtbro=nullptr;
 		
 		cacheroot->nxt=rootroot;
-		if(rootroot!=nullptr) cacheroot->nxt->prev=cacheroot;
+		cacheroot->prev=nullptr;
+		if(rootroot!=nullptr) rootroot->prev=cacheroot;
 		rootroot=cacheroot;
 	}
 	
@@ -44,9 +49,11 @@ private:
 		if(a->prev!=nullptr)
 			a->prev->nxt=a->nxt;
 		else rootroot=a->nxt;
+		a->nxt=nullptr;
+		a->prev=nullptr;
 	}
 
-public:
+public:			
 	void push(node& a){
 		heapnode* cache = &nodes[top];//create a heapnode for a and attach a to it
 		top++;
@@ -62,14 +69,20 @@ public:
 		if(value>a.value){
 			return;
 		}
-			//cout<<"cannot increase node size"<<endl;
+		
+		//cout<<"change "<<a.id<<' '<<a.value<<"->"<<value<<endl;
 		
 		a.value=value;
-		
+					
 		heapnode* cache = id_to_root[a.id];
 		heapnode* cachefa;
-		if(*(cache->value) < *(minn->value)) minn=cache;
+		if(*(cache->value) < *(minn->value)){
+			minn=cache;
+			//cout<<"minn: "<<cache->value->id<<endl;
+		}
 		
+		//cout<<"half done"<<endl;
+				
 		if(cache->fa!=nullptr and *(cache->fa->value)>a){
 			do{
 				cachefa=cache->fa;
@@ -84,6 +97,9 @@ public:
 					
 				insert_into_rootlist(cache);
 				cache->mark=0;
+				
+				//cout<<"inserted: "<<cache->value->id<<endl;
+				
 				cache=cachefa;
 				cachefa->degree--;
 				
@@ -93,6 +109,8 @@ public:
 				}
 			}while(cache->fa!=nullptr);
 		}
+		
+		//cout<<"done"<<endl;
 	}
 	
 	node& front(){
@@ -104,13 +122,21 @@ public:
 	}
 	
 	void del(){
+		//cout<<"del"<<endl;
+		//cout<<"id: "<<minn->value->id<<endl;
 		remove_from_rootlist(minn);
+		//id_to_root[minn->value->id]=nullptr;
+		top--;
+		
 		
 		heapnode* cache=minn->firstchild;
+		heapnode* cachenxt=nullptr;
 		while(cache!=nullptr){
+			//cout<<"inserted: "<<cache->value->id<<endl;
 			cache->fa=nullptr;
+			cachenxt=cache->nxtbro;
 			insert_into_rootlist(cache);
-			cache=cache->nxtbro;
+			cache=cachenxt;
 		}
 		
 		
@@ -119,7 +145,7 @@ public:
 		const double phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		double maxDegree = log(top) / log(phi);
 		
-		memset(unique_degree, 0, (int(maxDegree)+5) * sizeof(int*));
+		for(int i=0;i<maxn;i++) unique_degree[i]=nullptr;
 		
 		heapnode* rootcache=rootroot;
 		heapnode* current;
@@ -128,35 +154,56 @@ public:
 			current=rootcache;
 			
 			while(unique_degree[current->degree]!=nullptr){
+				//cout<<1<<endl;
 				if(*(current->value) < *(unique_degree[current->degree]->value)){
 					//remove larger from rootlist
-					remove_from_rootlist(unique_degree[current->degree]);
 					cache=unique_degree[current->degree];
+					
+					remove_from_rootlist(cache);
 					unique_degree[current->degree]=nullptr;
 					
-					//merge larger under smaller
+					//merge cache under current
+					//cout<<"1merged: "<<cache->value->id<<"under: "<<current->value->id<<endl;
 					if(current->firstchild!=nullptr) current->firstchild->prevbro=cache;
 					cache->prevbro=nullptr;
 					cache->nxtbro=current->firstchild;
 					current->firstchild=cache;
+					cache->fa=current;
 					current->degree++;
 				}
 				
 				else{
 					//remove larger from rootlist
-					remove_from_rootlist(current);
+					
 					cache=unique_degree[current->degree];
+					remove_from_rootlist(cache);
 					unique_degree[current->degree]=nullptr;
 					
 					//merge larger under smaller
-					swap(current,cache);
-					if(current->firstchild!=nullptr) current->firstchild->prevbro=cache;
-					cache->prevbro=nullptr;
-					cache->nxtbro=current->firstchild;
-					current->firstchild=cache;
-					current->degree++;
+					//take out cache and insert it beside current
+					cache->prev=current->prev;
+					cache->nxt=current->nxt;
+					if(current->nxt!=nullptr) current->nxt->prev=cache;
+					if(current->prev!=nullptr) current->prev->nxt=cache;
+					else rootroot=cache;
+					rootcache=cache;
+					
+					//merge current under cache
+					//cout<<"2merged: "<<current->value->id<<" under: "<<cache->value->id<<endl;
+					if(cache->firstchild!=nullptr) cache->firstchild->prevbro=current;
+					current->nxtbro=cache->firstchild;
+					current->prevbro=nullptr;
+					cache->firstchild=current;
+					current->fa=cache;
+					
+					//cout<<cache->firstchild->value->id<<endl;
+					//if(cache->firstchild->nxtbro!=nullptr)cout<<cache->firstchild->nxtbro->value->id<<endl;
+					
+					cache->degree++;
+					current=cache;
 				}
 			}
+			unique_degree[current->degree]=current;
 			rootcache=rootcache->nxt;
 		}
 		
@@ -164,11 +211,14 @@ public:
 		minn=nullptr;
 		
 		while(rootcache!=nullptr){
+			//cout<<"minn visited: "<<rootcache->value->id<<endl;
 			if(minn==nullptr or *(minn->value)>*(rootcache->value)){
 				minn=rootcache;
+				//cout<<"minn: "<<minn->value->id<<endl;
 			}
 			rootcache=rootcache->nxt;
 		}
+		//cout<<"done"<<endl;
 	}
 };
 			

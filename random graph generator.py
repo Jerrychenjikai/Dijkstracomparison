@@ -1,7 +1,7 @@
 import random
 
-n=1000
-m=1000000
+n=10000
+m=100000000
 max_weight=10000
 
 nodes=[]
@@ -22,7 +22,7 @@ for i in range(n):
     sides.append((start,i+1,random.randint(1,max_weight)))
     connected.append(i+1)
 
-for i in range(m-n):
+for i in range(m-n+1):
     sides.append((nodes[random.randint(0,len(nodes)-1)],nodes[random.randint(0,len(nodes)-1)],random.randint(1,max_weight)))
 
 with open("Input.in",'w') as fo:
