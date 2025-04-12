@@ -1,6 +1,6 @@
 #include <iostream>
 #include "node.h"
-#include "binaryheap.h"
+#include "fibonacciheap.h"
 #include <vector>
 #include <cstdio>
 #include <chrono>
@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("super.in","r",stdin);
+	freopen("ultraconnected.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;
