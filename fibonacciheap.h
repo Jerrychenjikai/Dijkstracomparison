@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <chrono>
-#include <thread>
 #include "node.h"
 #define maxn 200005
 using namespace std;
@@ -11,9 +9,6 @@ struct heapnode{
 	node* value;
 	bool mark=0;
 	int degree=0;
-	
-	heapnode* prevbro=nullptr;
-	heapnode* nxtbro=nullptr;
 	
 	heapnode* fa=nullptr;
 	heapnode* firstchild=nullptr;
@@ -34,8 +29,8 @@ private:
 	
 	void insert_into_rootlist(heapnode* a){
 		heapnode* cacheroot = a;
-		cacheroot->prevbro=nullptr;
-		cacheroot->nxtbro=nullptr;
+		cacheroot->prev=nullptr;
+		cacheroot->nxt=nullptr;
 		
 		cacheroot->nxt=rootroot;
 		cacheroot->prev=nullptr;
@@ -88,12 +83,12 @@ public:
 				cachefa=cache->fa;
 				cache->fa=nullptr;
 				
-				if(cache->prevbro!=nullptr)
-					cache->prevbro->nxtbro = cache->nxtbro;
+				if(cache->prev!=nullptr)
+					cache->prev->nxt = cache->nxt;
 				else
-					cachefa->firstchild=cache->nxtbro;
-				if(cache->nxtbro!=nullptr)
-					cache->nxtbro->prevbro = cache->prevbro;
+					cachefa->firstchild=cache->nxt;
+				if(cache->nxt!=nullptr)
+					cache->nxt->prev = cache->prev;
 					
 				insert_into_rootlist(cache);
 				cache->mark=0;
@@ -134,7 +129,7 @@ public:
 		while(cache!=nullptr){
 			//cout<<"inserted: "<<cache->value->id<<endl;
 			cache->fa=nullptr;
-			cachenxt=cache->nxtbro;
+			cachenxt=cache->nxt;
 			insert_into_rootlist(cache);
 			cache=cachenxt;
 		}
@@ -164,9 +159,9 @@ public:
 					
 					//merge cache under current
 					//cout<<"1merged: "<<cache->value->id<<"under: "<<current->value->id<<endl;
-					if(current->firstchild!=nullptr) current->firstchild->prevbro=cache;
-					cache->prevbro=nullptr;
-					cache->nxtbro=current->firstchild;
+					if(current->firstchild!=nullptr) current->firstchild->prev=cache;
+					cache->prev=nullptr;
+					cache->nxt=current->firstchild;
 					current->firstchild=cache;
 					cache->fa=current;
 					current->degree++;
@@ -190,14 +185,14 @@ public:
 					
 					//merge current under cache
 					//cout<<"2merged: "<<current->value->id<<" under: "<<cache->value->id<<endl;
-					if(cache->firstchild!=nullptr) cache->firstchild->prevbro=current;
-					current->nxtbro=cache->firstchild;
-					current->prevbro=nullptr;
+					if(cache->firstchild!=nullptr) cache->firstchild->prev=current;
+					current->nxt=cache->firstchild;
+					current->prev=nullptr;
 					cache->firstchild=current;
 					current->fa=cache;
 					
 					//cout<<cache->firstchild->value->id<<endl;
-					//if(cache->firstchild->nxtbro!=nullptr)cout<<cache->firstchild->nxtbro->value->id<<endl;
+					//if(cache->firstchild->nxt!=nullptr)cout<<cache->firstchild->nxt->value->id<<endl;
 					
 					cache->degree++;
 					current=cache;
