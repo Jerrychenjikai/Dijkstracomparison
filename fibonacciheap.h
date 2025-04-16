@@ -18,13 +18,11 @@ struct heapnode{
 };
 
 class priorityq{
-private:
-	heapnode* id_to_root[maxn];
-	
+private:	
 	heapnode* rootroot=nullptr; //root of root list
 	heapnode* minn=nullptr;
+	heapnode* rootend=nullptr;
 	
-	heapnode nodes[maxn];
 	int top=0;
 	
 	void insert_into_rootlist(heapnode* a){
@@ -35,12 +33,14 @@ private:
 		cacheroot->nxt=rootroot;
 		cacheroot->prev=nullptr;
 		if(rootroot!=nullptr) rootroot->prev=cacheroot;
+		else rootend=cacheroot;
 		rootroot=cacheroot;
 	}
 	
 	void remove_from_rootlist(heapnode* a){
 		if(a->nxt!=nullptr)
 			a->nxt->prev=a->prev;
+		else rootend=a->prev;
 		if(a->prev!=nullptr)
 			a->prev->nxt=a->nxt;
 		else rootroot=a->nxt;
@@ -48,12 +48,32 @@ private:
 		a->prev=nullptr;
 	}
 
-public:			
+public:
+	void merge(priorityq* a){//merge a into this heap
+		if (a == nullptr || a->empty()) {
+			return; // no need to merge
+		}
+		if(rootroot==nullptr){
+			minn=a->minn;
+			rootroot=a->rootroot;
+			rootend=a->rootend;
+			top=a->top;
+		}
+		else{
+			rootend->nxt=a->rootroot;
+			a->rootroot->prev=rootend;
+			rootend=a->rootend;
+			top+=a->top;
+			
+			if(*(minn->value)>*(a->minn->value)) minn=a->minn;
+		}
+	}
+		
 	void push(node& a){
-		heapnode* cache = &nodes[top];//create a heapnode for a and attach a to it
+		heapnode* cache = new heapnode;//create a heapnode for a and attach a to it
 		top++;
 		cache->value=&a;
-		id_to_root[a.id]=cache;
+		a.heaphandle = cache;
 		
 		insert_into_rootlist(cache);
 		
@@ -64,20 +84,15 @@ public:
 		if(value>a.value){
 			return;
 		}
-		
-		//cout<<"change "<<a.id<<' '<<a.value<<"->"<<value<<endl;
-		
+				
 		a.value=value;
 					
-		heapnode* cache = id_to_root[a.id];
+		heapnode* cache = a.heaphandle;
 		heapnode* cachefa;
 		if(*(cache->value) < *(minn->value)){
 			minn=cache;
-			//cout<<"minn: "<<cache->value->id<<endl;
 		}
-		
-		//cout<<"half done"<<endl;
-				
+						
 		if(cache->fa!=nullptr and *(cache->fa->value)>a){
 			do{
 				cachefa=cache->fa;
@@ -92,9 +107,7 @@ public:
 					
 				insert_into_rootlist(cache);
 				cache->mark=0;
-				
-				//cout<<"inserted: "<<cache->value->id<<endl;
-				
+								
 				cache=cachefa;
 				cachefa->degree--;
 				
@@ -104,8 +117,6 @@ public:
 				}
 			}while(cache->fa!=nullptr);
 		}
-		
-		//cout<<"done"<<endl;
 	}
 	
 	node& front(){
@@ -117,17 +128,13 @@ public:
 	}
 	
 	void del(){
-		//cout<<"del"<<endl;
-		//cout<<"id: "<<minn->value->id<<endl;
 		remove_from_rootlist(minn);
-		//id_to_root[minn->value->id]=nullptr;
 		top--;
 		
 		
 		heapnode* cache=minn->firstchild;
 		heapnode* cachenxt=nullptr;
 		while(cache!=nullptr){
-			//cout<<"inserted: "<<cache->value->id<<endl;
 			cache->fa=nullptr;
 			cachenxt=cache->nxt;
 			insert_into_rootlist(cache);
@@ -149,7 +156,6 @@ public:
 			current=rootcache;
 			
 			while(unique_degree[current->degree]!=nullptr){
-				//cout<<1<<endl;
 				if(*(current->value) < *(unique_degree[current->degree]->value)){
 					//remove larger from rootlist
 					cache=unique_degree[current->degree];
@@ -179,21 +185,18 @@ public:
 					cache->prev=current->prev;
 					cache->nxt=current->nxt;
 					if(current->nxt!=nullptr) current->nxt->prev=cache;
+					else rootend=cache;
 					if(current->prev!=nullptr) current->prev->nxt=cache;
 					else rootroot=cache;
 					rootcache=cache;
 					
 					//merge current under cache
-					//cout<<"2merged: "<<current->value->id<<" under: "<<cache->value->id<<endl;
 					if(cache->firstchild!=nullptr) cache->firstchild->prev=current;
 					current->nxt=cache->firstchild;
 					current->prev=nullptr;
 					cache->firstchild=current;
 					current->fa=cache;
-					
-					//cout<<cache->firstchild->value->id<<endl;
-					//if(cache->firstchild->nxt!=nullptr)cout<<cache->firstchild->nxt->value->id<<endl;
-					
+										
 					cache->degree++;
 					current=cache;
 				}
@@ -206,14 +209,11 @@ public:
 		minn=nullptr;
 		
 		while(rootcache!=nullptr){
-			//cout<<"minn visited: "<<rootcache->value->id<<endl;
 			if(minn==nullptr or *(minn->value)>*(rootcache->value)){
 				minn=rootcache;
-				//cout<<"minn: "<<minn->value->id<<endl;
 			}
 			rootcache=rootcache->nxt;
 		}
-		//cout<<"done"<<endl;
 	}
 };
 			
