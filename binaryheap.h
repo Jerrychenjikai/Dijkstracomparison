@@ -64,10 +64,9 @@ public:
 	void change(node& a,int value){
 		if(a.value>value){
 			a.value=value;
-			if(id_to_pos[a.id]>=top){
-				cout<<' '<<id_to_pos[a.id]<<' '<<top<<endl;
-				cout<<"!!!!!!!!!"<<endl;
-			}
+			if(id_to_pos[a.id]>=top)
+				throw runtime_error("Changed deleted values");
+				
 			adjust_down(id_to_pos[a.id]);
 		}
 	}

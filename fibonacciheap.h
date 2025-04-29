@@ -49,26 +49,6 @@ private:
 	}
 
 public:
-	void merge(priorityq* a){//merge a into this heap
-		if (a == nullptr || a->empty()) {
-			return; // no need to merge
-		}
-		if(rootroot==nullptr){
-			minn=a->minn;
-			rootroot=a->rootroot;
-			rootend=a->rootend;
-			top=a->top;
-		}
-		else{
-			rootend->nxt=a->rootroot;
-			a->rootroot->prev=rootend;
-			rootend=a->rootend;
-			top+=a->top;
-			
-			if(*(minn->value)>*(a->minn->value)) minn=a->minn;
-		}
-	}
-		
 	void push(node& a){
 		heapnode* cache = new heapnode;//create a heapnode for a and attach a to it
 		top++;

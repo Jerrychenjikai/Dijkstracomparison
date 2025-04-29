@@ -1,6 +1,6 @@
 #include <iostream>
 #include "node.h"
-#include "fibonacciheap.h"
+#include "binaryheap.h"
 #include <vector>
 #include <cstdio>
 #include <chrono>
