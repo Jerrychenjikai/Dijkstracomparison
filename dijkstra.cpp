@@ -1,10 +1,10 @@
 #include <iostream>
 #include "node.h"
-#include "radixheap.h"
+#include "binaryheap.h"
 #include <vector>
 #include <cstdio>
 #include <chrono>
-#define maxn 200005
+#define maxn 2000005
 using namespace std;
 
 /*	
@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("ultraconnected.in","r",stdin);
+	freopen("f.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;

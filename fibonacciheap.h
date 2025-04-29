@@ -2,7 +2,7 @@
 #include <vector>
 #include <cmath>
 #include "node.h"
-#define maxn 200005
+#define maxn 2000005
 using namespace std;
 
 struct heapnode{
@@ -122,7 +122,7 @@ public:
 		}
 		
 		
-		heapnode* unique_degree[maxn];
+		heapnode* unique_degree[maxn/10];
 		
 		const double phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		double maxDegree = log(top) / log(phi);

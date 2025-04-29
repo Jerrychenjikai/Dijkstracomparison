@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "node.h"
-#define maxn 200005
+#define maxn 2000005
 #define maxc 1005
 using namespace std;
 
