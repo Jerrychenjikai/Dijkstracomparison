@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("f.in","r",stdin);
+	freopen("1e6 sides/a.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;
