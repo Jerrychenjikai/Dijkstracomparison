@@ -117,7 +117,6 @@ public:
 		if(buckets[0].nxt==nullptr) break_up_bucket();
 		heapnode* cache=buckets[0].nxt;
 		cache->remove();
-		//if(cache->value->heaphandle!=cache) del();
 		top--;
 		delete cache;
 	}
@@ -128,7 +127,6 @@ public:
 			a.heaphandle->remove();
 			delete a.heaphandle;
 			push(a,0);
-			
 		}
 	}
 	

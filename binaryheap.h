@@ -7,10 +7,16 @@ using namespace std;
 class priorityq{//small heap
 private:
 	int id_to_pos[maxn];
+	
+	//using a list to represent the full binary tree structure:
+	//the root node falls on nodes[1];
+	//for nodes[n], its two sons are nodes[2n] and nodes[2n+1]
+	//for nodes[n], its father is nodes[n/2];
 	node* nodes[maxn];
 	int top=1;
 	
 	void adjust_down(int pos){
+		//swap node with its father if the node is smaller than its father
 		while(pos>1 and *nodes[pos/2]>*nodes[pos]){
 			swap(nodes[pos],nodes[pos/2]);
 			id_to_pos[nodes[pos]->id]=pos;
@@ -20,6 +26,7 @@ private:
 	}
 		
 	void adjust_up(int pos){
+		//swap node with its smaller son if the node is larger than its son
 		int compared;
 		while(true){
 			compared=pos*2;
@@ -42,6 +49,7 @@ private:
 
 public:
 	void push(node& a){
+		//put new node at the very end and swap down
 		nodes[top]=&a;
 		id_to_pos[a.id]=top;
 		top++;
@@ -50,10 +58,14 @@ public:
 	}
 	
 	node& front(){
+		//simply return the root node
 		return *nodes[1];
 	}
 	
 	void del(){
+		//move the last node to replace the deleted node
+		//and then swap up
+		
 		//cout<<"id: "<<nodes[1]->id<<endl;
 		nodes[1]=nodes[top-1];
 		id_to_pos[nodes[1]->id]=1;
@@ -62,6 +74,7 @@ public:
 	}
 	
 	void change(node& a,int value){
+		//reduce the value of a node and swap down.
 		if(a.value>value){
 			a.value=value;
 			if(id_to_pos[a.id]>=top)
