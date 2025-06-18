@@ -1,6 +1,6 @@
 #include <iostream>
 #include "node.h"
-#include "radixheap.h"//could be changed to other queues
+#include "binaryheap.h"//could be changed to other queues
 #include <vector>
 #include <cstdio>
 #include <chrono>
@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("100000.in","r",stdin);
+	freopen("25000000.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;
@@ -66,7 +66,7 @@ int main()
 	auto end_time = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed = end_time - start_time;
 		
-	for(int i=1;i<=n;i++) printf("%d ",nodes[i].value);	
+	//for(int i=1;i<=n;i++) printf("%d ",nodes[i].value);	
 	
 	printf("\n\nexecution time: %f seconds\n", elapsed.count());
 	
