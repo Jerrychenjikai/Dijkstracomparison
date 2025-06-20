@@ -1,6 +1,6 @@
 import random
 
-n=2000000
+n=100
 m=2000000
 max_weight=10000
 
