@@ -1,6 +1,6 @@
 #include <iostream>
 #include "node.h"
-#include "binaryheap.h"//could be changed to other queues
+#include "fibonacciheap.h"//could be changed to other queues
 #include <vector>
 #include <cstdio>
 #include <chrono>
@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("100.in","r",stdin);
+	freopen("10000.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;
