@@ -92,6 +92,14 @@ private:
 		cout << "End of Queue State\n" << endl;
 	}
 public:
+	void init(){
+		top=0;
+		last_deleted=0;
+		memset(buckets, 0, sizeof(buckets));
+		
+		return;
+	}
+	
 	void push(node& a, bool actual=1){
 		heapnode* cache=new heapnode;
 		if(actual) top++;

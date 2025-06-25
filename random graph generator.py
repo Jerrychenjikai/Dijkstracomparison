@@ -1,7 +1,7 @@
 import random
 
-n=5000
-m=25000000
+n=100000
+m=23000000
 max_weight=10000
 
 nodes=[]

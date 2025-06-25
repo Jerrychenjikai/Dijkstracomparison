@@ -6,6 +6,7 @@ using namespace std;
 
 class priorityq{//small heap
 private:
+	//this array is used to quickly locate a given node to perform decrease key
 	int id_to_pos[maxn];
 	
 	//using a list to represent the full binary tree structure:
@@ -48,6 +49,11 @@ private:
 	}
 
 public:
+	void init(){
+		top=1;
+		return;
+	}
+	
 	void push(node& a){
 		//put new node at the very end and swap down
 		nodes[top]=&a;
@@ -78,7 +84,7 @@ public:
 		if(a.value>value){
 			a.value=value;
 			if(id_to_pos[a.id]>=top)
-				throw runtime_error("Changed deleted values");
+				throw runtime_error("Value already deleted, could not be changed");
 				
 			adjust_down(id_to_pos[a.id]);
 		}
