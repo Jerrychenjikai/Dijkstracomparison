@@ -1,6 +1,6 @@
 #include <iostream>
 #include "node.h"
-#include "binaryheap.h"//could be changed to other queues
+#include "radixheap.h"//could be changed to other queues
 #include <vector>
 #include <cstdio>
 #include <chrono>
@@ -35,7 +35,7 @@ priorityq q;
 
 int main()
 {
-	freopen("100000.in","r",stdin);
+	freopen("2000000.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;
@@ -48,7 +48,7 @@ int main()
 		nodes[start].cost.push_back(cost);
 	}
 	
-	for(int i1=0;i1<100;i1++){
+	for(int i1=0;i1<30;i1++){
 		q.init();
 		
 		//start timer
@@ -82,7 +82,7 @@ int main()
 		min_time=min(min_time, elapsed.count());
 	}
 	
-	printf("\n\naverage execution time: %f seconds\n", avg_time/100);
+	printf("\n\naverage execution time: %f seconds\n", avg_time/30);
 	printf("\nmax execution time: %f seconds\n", max_time);
 	printf("\nmin execution time: %f seconds\n", min_time);
 	
