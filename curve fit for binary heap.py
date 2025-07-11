@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
+
 
 def func(x, a, b, c):
     return a * x * np.log2(x) + b * np.log2(x) + c
@@ -52,3 +54,27 @@ ss_tot = np.sum((ydata - np.mean(ydata)) ** 2)
 r_squared = 1 - (ss_res / ss_tot)
 
 print(f"R² = {r_squared:.4f}")
+
+
+# plot
+plt.figure(figsize=(10, 6))
+
+# draw data points
+plt.scatter(xdata, ydata, color='red', label='data points')
+
+# create x values to plot line of best fit
+x_smooth = np.linspace(min(xdata), max(xdata), 500)
+y_smooth = func(x_smooth, a, b, c)
+
+# plot line of best fit
+plt.plot(x_smooth, y_smooth, 'b-', label=f'line of best fit: {a:.2e}·n·log₂n + {b:.2e}·log₂n + {c:.2e}\nR^2={r_squared}')
+
+# add titles and legends
+plt.xlabel('node count')
+plt.ylabel('time')
+plt.title('Binary heap v.s. node count')
+plt.legend()
+plt.grid(True)
+
+# show plot
+plt.show()
