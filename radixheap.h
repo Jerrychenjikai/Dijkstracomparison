@@ -92,6 +92,14 @@ private:
 		cout << "End of Queue State\n" << endl;
 	}
 public:
+	void init(){
+		top=0;
+		last_deleted=0;
+		memset(buckets, 0, sizeof(buckets));
+		
+		return;
+	}
+	
 	void push(node& a, bool actual=1){
 		heapnode* cache=new heapnode;
 		if(actual) top++;
@@ -117,7 +125,6 @@ public:
 		if(buckets[0].nxt==nullptr) break_up_bucket();
 		heapnode* cache=buckets[0].nxt;
 		cache->remove();
-		//if(cache->value->heaphandle!=cache) del();
 		top--;
 		delete cache;
 	}
@@ -128,7 +135,6 @@ public:
 			a.heaphandle->remove();
 			delete a.heaphandle;
 			push(a,0);
-			
 		}
 	}
 	

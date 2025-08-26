@@ -21,11 +21,12 @@ class priorityq{
 private:	
 	heapnode* rootroot=nullptr; //root of root list
 	heapnode* minn=nullptr;
-	heapnode* rootend=nullptr;
+	heapnode* rootend=nullptr; //end of root list
 	
 	int top=0;
 	
 	void insert_into_rootlist(heapnode* a){
+		//insert a node into the rootlist and adjust the pointers accordingly
 		heapnode* cacheroot = a;
 		cacheroot->prev=nullptr;
 		cacheroot->nxt=nullptr;
@@ -38,6 +39,7 @@ private:
 	}
 	
 	void remove_from_rootlist(heapnode* a){
+		//remove a node from the rootlist and adjust the pointers accordingly
 		if(a->nxt!=nullptr)
 			a->nxt->prev=a->prev;
 		else rootend=a->prev;
@@ -49,12 +51,22 @@ private:
 	}
 
 public:
+	void init(){
+		rootroot=nullptr;
+		minn=nullptr;
+		rootend=nullptr;
+		
+		top=0;
+		return;
+	}
+	
 	void push(node& a){
 		heapnode* cache = new heapnode;//create a heapnode for a and attach a to it
 		top++;
 		cache->value=&a;
 		a.heaphandle = cache;
 		
+		//put all new nodes into the root list
 		insert_into_rootlist(cache);
 		
 		if(minn==nullptr or *(cache->value) < *(minn->value)) minn=cache;//update minn pointer
@@ -72,12 +84,15 @@ public:
 		if(*(cache->value) < *(minn->value)){
 			minn=cache;
 		}
-						
+		
+		//cascading cut
+		//if new value violates the heap property then activate the cut
 		if(cache->fa!=nullptr and *(cache->fa->value)>a){
 			do{
 				cachefa=cache->fa;
 				cache->fa=nullptr;
 				
+				//remove the changed node from the tree
 				if(cache->prev!=nullptr)
 					cache->prev->nxt = cache->nxt;
 				else
@@ -85,13 +100,14 @@ public:
 				if(cache->nxt!=nullptr)
 					cache->nxt->prev = cache->prev;
 					
-				insert_into_rootlist(cache);
+				insert_into_rootlist(cache);//put the changed node into root list
 				cache->mark=0;
 								
-				cache=cachefa;
-				cachefa->degree--;
+				cache=cachefa;//change the current node to its father to continue cutting
+				cachefa->degree--;//don't forget to change the degree of the father
 				
-				if(!cache->mark){
+				if(!cache->mark){//if mark = 0 then end the cut
+					//mark = 1 -> there is already a child cut off
 					cache->mark=1;
 					break;
 				}
@@ -111,31 +127,36 @@ public:
 		remove_from_rootlist(minn);
 		top--;
 		
-		
-		heapnode* cache=minn->firstchild;
+		//put all the sons of the deleted node into the root list
+		heapnode* cache=minn->firstchild;//go to the first son
 		heapnode* cachenxt=nullptr;
 		while(cache!=nullptr){
 			cache->fa=nullptr;
 			cachenxt=cache->nxt;
-			insert_into_rootlist(cache);
-			cache=cachenxt;
+			insert_into_rootlist(cache);//put it in root list
+			cache=cachenxt;//go to the next son and continue
 		}
 		
 		
-		heapnode* unique_degree[maxn/10];
+		heapnode* unique_degree[maxn/10];//an array for merging all trees with same degree
 		
 		const double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+		//this is the theoretical maximum number of spots required
 		double maxDegree = log(top) / log(phi);
 		
+		//only initialize that many spots
 		for(int i=0;i<maxDegree+5;i++) unique_degree[i]=nullptr;
 		
+		//iterate through all elements in the rootlist
 		heapnode* rootcache=rootroot;
 		heapnode* current;
 		
 		while(rootcache!=nullptr){
 			current=rootcache;
 			
-			while(unique_degree[current->degree]!=nullptr){
+			while(unique_degree[current->degree]!=nullptr){//if there is already a tree with same degree
+				//merge the two trees according to heap property
+				//i.e. merge the root under the smaller
 				if(*(current->value) < *(unique_degree[current->degree]->value)){
 					//remove larger from rootlist
 					cache=unique_degree[current->degree];
@@ -143,8 +164,7 @@ public:
 					remove_from_rootlist(cache);
 					unique_degree[current->degree]=nullptr;
 					
-					//merge cache under current
-					//cout<<"1merged: "<<cache->value->id<<"under: "<<current->value->id<<endl;
+					//merge cache(larger) under current(smaller)
 					if(current->firstchild!=nullptr) current->firstchild->prev=cache;
 					cache->prev=nullptr;
 					cache->nxt=current->firstchild;
@@ -155,7 +175,6 @@ public:
 				
 				else{
 					//remove larger from rootlist
-					
 					cache=unique_degree[current->degree];
 					remove_from_rootlist(cache);
 					unique_degree[current->degree]=nullptr;
@@ -190,7 +209,7 @@ public:
 		
 		while(rootcache!=nullptr){
 			if(minn==nullptr or *(minn->value)>*(rootcache->value)){
-				minn=rootcache;
+				minn=rootcache;//iterate through rootlist to find the smallest element
 			}
 			rootcache=rootcache->nxt;
 		}
