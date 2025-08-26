@@ -1,6 +1,6 @@
 #include <iostream>
 #include "node.h"
-#include "binaryheap.h"
+#include "radixheap.h"
 #include <vector>
 #include <cstdio>
 #include <chrono>
@@ -30,7 +30,7 @@ priorityq q;
 
 int main()
 {
-	freopen("1e6 sides/a.in","r",stdin);
+	freopen("1e6 sides/10e5.in","r",stdin);
 	scanf("%d %d %d",&n, &m, &root);
 	
 	for(int i=0;i<=n;i++) nodes[i].id=i;
