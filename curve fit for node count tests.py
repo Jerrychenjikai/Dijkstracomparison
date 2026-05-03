@@ -12,7 +12,7 @@ def fibonacci_func(x,a,b):
 def radix_func(x,a,b):
     return a*x + b
 
-data_structure = "Binary heap"
+data_structure = "Radix heap"
 func = radix_func
 
 xdata = [100,
