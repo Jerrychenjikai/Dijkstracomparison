@@ -1,10 +1,6 @@
 #include <iostream>
 #include "node.h"
-<<<<<<< HEAD
-#include "radixheap.h"
-=======
 #include "radixheap.h"//could be changed to other queues
->>>>>>> 1a1463bb50c86eaa99294da5a714ce2969e7cf50
 #include <vector>
 #include <cstdio>
 #include <chrono>
